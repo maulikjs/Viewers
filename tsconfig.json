@@ -25,6 +25,7 @@
       "@ohif/extension-cornerstone-dicom-seg": ["./extensions/cornerstone-dicom-seg/src"],
       "@ohif/extension-cornerstone": ["./extensions/cornerstone/src"],
       "@ohif/extension-dicom-pdf": ["./extensions/dicom-pdf/src"],
+      "@ohif-local/extension-ohif-ffpe-extension": ["./extensions/ohif-ffpe-extension/src"],
       "@state": ["./platform/app/src/state"]
     }
   },

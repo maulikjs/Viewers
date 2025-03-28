@@ -61,6 +61,15 @@
       "packageName": "@ohif/extension-cornerstone-dicom-rt",
       "default": false,
       "version": "3.0.0"
+    },
+    {
+      "packageName": "@ohif-local/ohif-ffpe-extension",
+      "version": "0.0.1",
+      "default": false
+    },
+    {
+      "packageName": "FFPE-Test-Extension",
+      "version": "0.0.1"
     }
   ],
   "modes": [
