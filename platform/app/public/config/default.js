@@ -4,7 +4,7 @@ window.config = {
   name: 'config/default.js',
   routerBasename: null,
   // whiteLabeling: {},
-  extensions: [],
+  extensions: ['@ohif-local/ohif-ffpe-extension'],
   modes: [],
   customizationService: {},
   showStudyList: true,
