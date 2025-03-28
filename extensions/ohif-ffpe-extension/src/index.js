@@ -1,6 +1,6 @@
- // ~/work/OHIF/Viewers/extensions/ohif-ffpe-extension/index.js
-import commandsModule from './src/commandsModule.js';
-import toolbarModule from './src/toolbarModule.js';
+// ~/work/OHIF/Viewers/extensions/ohif-ffpe-extension/index.js
+import commandsModule from './commandsModule.js';
+import toolbarModule from './toolbarModule.js';
 
 console.log('Loading ohif-ffpe-extension...'); // Debug log 1
 

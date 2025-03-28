@@ -519,7 +519,120 @@ const commandsModule = ({
         containerClassName: 'max-w-3xl',
       });
     },
+    async runAIService({ displaySetInstanceUID }: { displaySetInstanceUID?: string }) {
+      const { activeViewportId, viewports } = viewportGridService.getState();
+      const activeViewport = viewports.get(activeViewportId);
+      const { displaySetInstanceUIDs } = activeViewport;
 
+      if (
+        !activeViewport ||
+        !activeViewport.displaySetInstanceUIDs ||
+        activeViewport.displaySetInstanceUIDs.length === 0
+      ) {
+        uiNotificationService.show({
+          title: 'FFPE Conversion',
+          message: 'No image selected or active viewport has no display sets.',
+          type: 'warning',
+        });
+        return;
+      }
+      console.log(displaySetInstanceUID);
+      // Assuming the first displaySet in the active viewport is the target WSI
+      // You might need more complex logic if multiple display sets are shown
+      const displaySet = displaySetService.getDisplaySetByUID(displaySetInstanceUIDs[0]);
+
+      if (!displaySet) {
+        uiNotificationService.show({
+          title: 'FFPE Conversion',
+          message: 'Could not retrieve display set details.',
+          type: 'error',
+        });
+        return;
+      }
+
+      // Extract necessary UIDs
+      const seriesInstanceUID = displaySet.SeriesInstanceUID;
+      const studyInstanceUID = displaySet.StudyInstanceUID;
+
+      if (!seriesInstanceUID || !studyInstanceUID) {
+        uiNotificationService.show({
+          title: 'FFPE Conversion',
+          message: 'Missing required Study or Series UID.',
+          type: 'error',
+        });
+        return;
+      }
+
+      console.log(
+        `Requesting FFPE conversion for Study: ${studyInstanceUID}, Series: ${seriesInstanceUID}`
+      );
+
+      // --- Optional: Confirmation Dialog ---
+      // const confirmed = await new Promise(resolve => {
+      //   uiModalService.show({
+      //     content: ({ hide }) => ( // Simple confirmation component
+      //       <div>
+      //         <h3>Confirm FFPE Conversion</h3>
+      //         <p>Run AI conversion for Series: {seriesInstanceUID}?</p>
+      //         <button onClick={() => { hide(); resolve(true); }}>Yes</button>
+      //         <button onClick={() => { hide(); resolve(false); }}>No</button>
+      //       </div>
+      //     ),
+      //     title: 'Confirm Action',
+      //   });
+      // });
+      // if (!confirmed) {
+      //   uiNotificationService.show({ title: 'FFPE Conversion', message: 'Operation cancelled.', type: 'info' });
+      //   return;
+      // }
+      // --- End Optional Confirmation ---
+
+      uiNotificationService.show({
+        title: 'FFPE Conversion',
+        message: `Initiating conversion for Series ${seriesInstanceUID}...`,
+        type: 'info',
+        duration: 3000, // Hide after 3 seconds
+      });
+
+      try {
+        const response = await fetch('http://localhost:5000', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ studyInstanceUID, seriesInstanceUID }),
+        });
+
+        const responseData = await response.json(); // Try to parse JSON regardless of status
+
+        if (!response.ok) {
+          // Use error message from API if available, otherwise use status text
+          const errorMessage =
+            responseData.error || responseData.message || `HTTP error! Status: ${response.status}`;
+          throw new Error(errorMessage);
+        }
+
+        console.log('FFPE Conversion request successful:', responseData);
+        uiNotificationService.show({
+          title: 'FFPE Conversion',
+          message:
+            responseData.message ||
+            'Processing successfully started. Result will be uploaded to Orthanc.',
+          type: 'success',
+        });
+
+        // You might want to trigger a refresh of the study list or query Orthanc
+        // after a delay to see the new series, but this is complex.
+        // Example: setTimeout(() => commandsManager.runCommand('refreshStudyBrowser'), 15000); // 15 sec delay
+      } catch (error) {
+        console.error('Error calling FFPE integration service:', error);
+        uiNotificationService.show({
+          title: 'FFPE Conversion Failed',
+          message: `Error: ${error.message}`,
+          type: 'error', // Keep error message displayed longer
+        });
+      }
+    },
     /**
      * Toggle viewport overlay (the information panel shown on the four corners
      * of the viewport)
@@ -651,6 +764,7 @@ const commandsModule = ({
     toggleOneUp: actions.toggleOneUp,
     openDICOMTagViewer: actions.openDICOMTagViewer,
     updateViewportDisplaySet: actions.updateViewportDisplaySet,
+    runAIService: actions.runAIService,
   };
 
   return {

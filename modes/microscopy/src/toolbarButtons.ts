@@ -136,6 +136,17 @@ const toolbarButtons: Button[] = [
       evaluate: 'evaluate.action',
     },
   },
+  {
+    id: 'RunAIService',
+    uiType: 'ohif.toolButton',
+    props: {
+      icon: 'info-link',
+      label: 'Run AI Service',
+      tooltip: 'Run AI Service',
+      commands: 'runAIService',
+      evaluate: 'evaluate.action',
+    },
+  },
 ];
 
 export default toolbarButtons;

@@ -66,10 +66,6 @@
       "packageName": "@ohif-local/ohif-ffpe-extension",
       "version": "0.0.1",
       "default": false
-    },
-    {
-      "packageName": "FFPE-Test-Extension",
-      "version": "0.0.1"
     }
   ],
   "modes": [
